@@ -1,14 +1,11 @@
 package com.br.Library.security;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
+import com.br.Library.dto.EmployeeRequestDTO;
 import com.br.Library.dto.UserRequestDTO;
 import com.br.Library.enums.RoleName;
 import com.br.Library.model.RoleModel;
@@ -44,8 +41,8 @@ public class SetupRoles implements ApplicationListener<ContextRefreshedEvent> {
         createRoleIfNotFound(RoleName.ROLE_ADMINISTRATOR);
 
         /* clientService.createClient(new UserRequestDTO("client", "senha"));
-        employeeService.createEmployee(new UserRequestDTO("employee", "senha"), RoleName.ROLE_EMPLOYEE);
-        employeeService.createEmployee(new UserRequestDTO("adm", "senha"), RoleName.ROLE_ADMINISTRATOR); */
+        employeeService.createEmployee(new EmployeeRequestDTO("employee", "senha", "ROLE_EMPLOYEE"));
+        employeeService.createEmployee(new EmployeeRequestDTO("adm", "senha", "ROLE_ADMINISTRATOR")); */
 
         alreadySetup = true;
     }
