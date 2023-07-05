@@ -34,17 +34,18 @@ public class UserService implements UserDetailsService {
 
     public UserModel findByUsername(String username) {
         UserDetails userDetails = loadUserByUsername(username);
-        return (UserModel) userDetails;
+        if(userDetails != null) {
+            return (UserModel) userDetails;
+        } else {
+            throw new RuntimeException("user not found");
+        }
+        
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<UserModel> optional = repository.findByUsername(username);
-        if(optional.isPresent()) {
-            return optional.get();
-        } else {
-            throw new UserNotFoundException(null);
-        }
+        return repository.findByUsername(username).get();
+        
     }
     
 }
