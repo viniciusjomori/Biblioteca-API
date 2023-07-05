@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.br.Library.dto.EmployeeRequestDTO;
 import com.br.Library.dto.ResponseMessage;
-import com.br.Library.dto.UserResponseDTO;
+import com.br.Library.dto.UserInfo;
 import com.br.Library.mapper.UserMapper;
 import com.br.Library.model.UserModel;
 import com.br.Library.service.EmployeeService;
@@ -37,21 +37,21 @@ public class EmployeeController {
     private ResponseMessage responseMessage;
 
     @GetMapping
-    public ResponseEntity<Iterable<UserResponseDTO>> getAll() {
+    public ResponseEntity<Iterable<UserInfo>> getAll() {
         Iterable<UserModel> users = service.getAll();
         return ResponseEntity.ok(mapper.toListResponseDTO(users));
     }
 
     @PostMapping
-    public ResponseEntity<UserResponseDTO> createEmployee(@RequestBody @Valid EmployeeRequestDTO dto) {
+    public ResponseEntity<UserInfo> createEmployee(@RequestBody @Valid EmployeeRequestDTO dto) {
         UserModel model = service.createEmployee(dto);
-        return ResponseEntity.ok(mapper.toResponseDTO(model));
+        return ResponseEntity.ok(mapper.toInfo(model));
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<UserResponseDTO> createEmployee(@RequestBody @Valid EmployeeRequestDTO dto, @PathVariable Long id) {
+    public ResponseEntity<UserInfo> createEmployee(@RequestBody @Valid EmployeeRequestDTO dto, @PathVariable Long id) {
         UserModel model = service.updateEmployee(dto, id);
-        return ResponseEntity.ok(mapper.toResponseDTO(model));
+        return ResponseEntity.ok(mapper.toInfo(model));
     }
 
     @DeleteMapping("{id}")

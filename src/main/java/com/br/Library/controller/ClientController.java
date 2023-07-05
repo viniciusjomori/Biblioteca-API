@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.br.Library.dto.ClientResponseDTO;
 import com.br.Library.dto.ReserveResponseDTO;
 import com.br.Library.dto.UserRequestDTO;
-import com.br.Library.dto.UserResponseDTO;
+import com.br.Library.mapper.ClientMapper;
 import com.br.Library.mapper.ReserveMapper;
-import com.br.Library.mapper.UserMapper;
 import com.br.Library.model.ReserveModel;
 import com.br.Library.model.UserModel;
 import com.br.Library.service.ClientService;
@@ -35,24 +35,24 @@ public class ClientController {
     private ReserveService reserveService;
 
     @Autowired
-    private UserMapper userMapper;
+    private ClientMapper clientMapper;
 
     @Autowired
     private ReserveMapper reserveMapper;
 
     @PostMapping
-    public ResponseEntity<UserResponseDTO> createClient(@RequestBody @Valid UserRequestDTO requestDTO) {
+    public ResponseEntity<ClientResponseDTO> createClient(@RequestBody @Valid UserRequestDTO requestDTO) {
         UserModel client = clientService.createClient(requestDTO);
-        return ResponseEntity.ok(userMapper.toResponseDTO(client));
+        return ResponseEntity.ok(clientMapper.toResponseDTO(client));
     }
 
-    @PostMapping("reserve-book/{bookId}")
+    @PostMapping("reserve/{bookId}")
     public ResponseEntity<ReserveResponseDTO> createReserve(@PathVariable long bookId, @RequestHeader("Authorization") String tokenJwt) {
         ReserveModel model = reserveService.createReserve(bookId, tokenJwt);
         return ResponseEntity.ok(reserveMapper.toResponseDTO(model));
     }
 
-    @PutMapping("/cancel-reserve/{id}")
+    @PutMapping("/reserve/cancel/{id}")
     public ResponseEntity<ReserveResponseDTO> cancel(@PathVariable long id, @RequestHeader("Authorization") String tokenJwt) {
         ReserveModel reserve = reserveService.cancel(id, tokenJwt);
         return ResponseEntity.ok(reserveMapper.toResponseDTO(reserve));

@@ -2,7 +2,7 @@ package com.br.Library.dto;
 
 import com.br.Library.enums.RoleName;
 
-public record UserResponseDTO(
+public record UserInfo(
     long id,
     String username,
     RoleName role,

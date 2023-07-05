@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.Library.dto.UserRequestDTO;
-import com.br.Library.dto.UserResponseDTO;
+import com.br.Library.dto.UserInfo;
 import com.br.Library.mapper.UserMapper;
 import com.br.Library.model.UserModel;
 import com.br.Library.security.TokenUtil;
@@ -50,9 +50,9 @@ public class UserController {
     }
 
     @GetMapping("/online")
-    public ResponseEntity<UserResponseDTO> getOnlineUser(@RequestHeader("Authorization") String tokenJwt) {
+    public ResponseEntity<UserInfo> getOnlineUser(@RequestHeader("Authorization") String tokenJwt) {
         String username = TokenUtil.getSubject(tokenJwt);
         UserModel user = service.findByUsername(username);
-        return ResponseEntity.ok(mapper.toResponseDTO(user));
+        return ResponseEntity.ok(mapper.toInfo(user));
     }
 }

@@ -9,7 +9,9 @@ public record BookResponseDTO(
     String publishingCompany,
     LocalDate releaseDate,
     int totalCopies,
-    int availableCopies
+    int availableCopies,
+    Iterable<LoanInfo> loans,
+    Iterable<ReserveInfo> reserves
 ) {
     
 }
