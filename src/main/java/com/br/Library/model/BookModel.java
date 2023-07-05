@@ -34,5 +34,7 @@ public class BookModel {
     private int availableCopies;
     @OneToMany(mappedBy = "book")
     Collection<LoanModel> loans;
+    @OneToMany(mappedBy = "book")
+    Collection<ReserveModel> reserves;
 
 }

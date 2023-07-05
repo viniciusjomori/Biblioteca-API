@@ -13,6 +13,7 @@ import com.br.Library.model.RoleModel;
 import com.br.Library.model.UserModel;
 import com.br.Library.repository.RoleRepository;
 import com.br.Library.repository.UserRepository;
+import com.br.Library.security.TokenUtil;
 
 import jakarta.transaction.Transactional;
 
@@ -51,5 +52,15 @@ public class ClientService {
         }
 
         throw new UserNotFoundException(id);
+    }
+
+    public UserModel findOnlineClient(String tokenJwt) {
+        String username = TokenUtil.getSubject(tokenJwt);
+        Optional<RoleModel> opt = roleRepository.findByName(RoleName.ROLE_CLIENT);
+        RoleModel role = opt.get();
+        for (UserModel user : role.getUsers()) {
+            if(user.getUsername().equals(username)) return user;
+        }
+        throw new RuntimeException("client not found");
     }
 }
