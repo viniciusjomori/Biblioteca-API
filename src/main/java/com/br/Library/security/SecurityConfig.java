@@ -34,6 +34,10 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.DELETE, "book/**").hasRole("EMPLOYEE")
                 .requestMatchers(HttpMethod.GET, "client/**").hasRole("EMPLOYEE")
                 .requestMatchers(HttpMethod.GET, "role/**").hasRole("EMPLOYEE")
+                .requestMatchers(HttpMethod.GET, "employee/**").hasRole("EMPLOYEE")
+                .requestMatchers(HttpMethod.POST, "employee/**").hasRole("ADMINISTRATOR")
+                .requestMatchers(HttpMethod.PUT, "employee/**").hasRole("ADMINISTRATOR")
+                .requestMatchers(HttpMethod.DELETE, "employee/**").hasRole("ADMINISTRATOR")
                 .anyRequest().permitAll()
                 .and().cors();
                 
