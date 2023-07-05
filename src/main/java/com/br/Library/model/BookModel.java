@@ -1,12 +1,14 @@
 package com.br.Library.model;
 
 import java.time.LocalDate;
+import java.util.Collection;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -30,5 +32,7 @@ public class BookModel {
     private int totalCopies;
     @Column
     private int availableCopies;
+    @OneToMany(mappedBy = "book")
+    Collection<LoanModel> loans;
 
 }

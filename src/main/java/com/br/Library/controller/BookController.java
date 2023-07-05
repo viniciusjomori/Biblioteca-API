@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.Library.dto.BookRequestDTO;
+import com.br.Library.dto.BookResponseDTO;
 import com.br.Library.dto.ResponseMessage;
+import com.br.Library.mapper.BookMapper;
 import com.br.Library.model.BookModel;
 import com.br.Library.service.BookService;
 
@@ -29,26 +31,33 @@ public class BookController {
     private BookService service;
 
     @Autowired
+    private BookMapper mapper;
+
+    @Autowired
     private ResponseMessage responseMessage;
 
     @PostMapping
-    public ResponseEntity<BookModel> createBook(@RequestBody @Valid BookRequestDTO dto) {
-        return ResponseEntity.ok(service.createBook(dto));
+    public ResponseEntity<BookResponseDTO> createBook(@RequestBody @Valid BookRequestDTO dto) {
+        BookModel book = service.createBook(dto);
+        return ResponseEntity.ok(mapper.toResponseDTO(book));
     }
 
     @GetMapping
-    public ResponseEntity<Iterable<BookModel>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<Iterable<BookResponseDTO>> getAll() {
+        Iterable<BookModel> books = service.getAll();
+        return ResponseEntity.ok(mapper.toListResponseDTO(books));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookModel> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.findById(id));
+    public ResponseEntity<BookResponseDTO> findById(@PathVariable Long id) {
+        BookModel book = service.findById(id);
+        return ResponseEntity.ok(mapper.toResponseDTO(book));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BookModel> updateBook(@RequestBody @Valid BookRequestDTO dto, @PathVariable Long id) {
-        return ResponseEntity.ok(service.updateBook(dto, id));
+    public ResponseEntity<BookResponseDTO> updateBook(@RequestBody @Valid BookRequestDTO dto, @PathVariable Long id) {
+        BookModel book = service.updateBook(dto, id);
+        return ResponseEntity.ok(mapper.toResponseDTO(book));
     }
 
     @DeleteMapping("/{id}")
@@ -58,5 +67,6 @@ public class BookController {
         responseMessage.setHttpStatus(HttpStatus.OK);
         return ResponseEntity.ok(responseMessage);
     }
+
 }
 

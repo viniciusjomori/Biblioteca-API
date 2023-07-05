@@ -32,12 +32,16 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "book/**").hasRole("EMPLOYEE")
                 .requestMatchers(HttpMethod.PUT, "book/**").hasRole("EMPLOYEE")
                 .requestMatchers(HttpMethod.DELETE, "book/**").hasRole("EMPLOYEE")
+                .requestMatchers(HttpMethod.GET, "loan/**").hasRole("EMPLOYEE")
+                .requestMatchers(HttpMethod.POST, "loan/**").hasRole("EMPLOYEE")
+                .requestMatchers(HttpMethod.PUT, "loan/**").hasRole("EMPLOYEE")
                 .requestMatchers(HttpMethod.GET, "client/**").hasRole("EMPLOYEE")
                 .requestMatchers(HttpMethod.GET, "role/**").hasRole("EMPLOYEE")
                 .requestMatchers(HttpMethod.GET, "employee/**").hasRole("EMPLOYEE")
                 .requestMatchers(HttpMethod.POST, "employee/**").hasRole("ADMINISTRATOR")
                 .requestMatchers(HttpMethod.PUT, "employee/**").hasRole("ADMINISTRATOR")
                 .requestMatchers(HttpMethod.DELETE, "employee/**").hasRole("ADMINISTRATOR")
+                
                 .anyRequest().permitAll()
                 .and().cors();
                 

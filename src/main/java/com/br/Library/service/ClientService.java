@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.br.Library.dto.UserRequestDTO;
 import com.br.Library.enums.RoleName;
+import com.br.Library.exceptions.user.UserNotFoundException;
 import com.br.Library.model.RoleModel;
 import com.br.Library.model.UserModel;
 import com.br.Library.repository.RoleRepository;
@@ -39,5 +40,16 @@ public class ClientService {
         client.setPassword(passwordEncoder.encode(dto.password()));
         client.setRole(roleRepository.findByName(RoleName.ROLE_CLIENT).get());
         return userRepository.save(client);
+    }
+
+    public UserModel findById(long id) {
+        Iterable<UserModel> clients = getAll();
+        for(UserModel client : clients) {
+            if(client.getId() == id) {
+                return client;
+            }
+        }
+
+        throw new UserNotFoundException(id);
     }
 }
