@@ -11,7 +11,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,8 +18,6 @@ import java.util.Set;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import io.jsonwebtoken.lang.Arrays;
 
 @Entity
 @Table(name = "tb_user")
@@ -56,7 +53,7 @@ public class UserModel implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return new ArrayList(Arrays.asList(
+        return new HashSet<>(Set.of(
             new SimpleGrantedAuthority(this.role.getName().toString())
         ));
     }
