@@ -1,7 +1,5 @@
 package com.br.Library.service;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,11 +21,13 @@ public class RoleService {
 
     public RoleModel findByName(String name) {
         name = name.toUpperCase();
-        RoleName roleName = RoleName.valueOf(name);
-        Optional<RoleModel> optional = repository.findByName(roleName);
-        if(optional.isPresent()) {
-            return optional.get();
-        } else {
+        if(!name.startsWith("ROLE_")) {
+            name = "ROLE_"+name;
+        }
+        try {
+            RoleName roleName = RoleName.valueOf(name);
+            return repository.findByName(roleName).get();
+        } catch(IllegalArgumentException e) {
             throw new ResponseStatusException(
                 "Role not found", 
                 HttpStatus.NOT_FOUND
