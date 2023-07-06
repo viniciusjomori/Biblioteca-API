@@ -10,4 +10,5 @@ import com.br.Library.model.RoleModel;
 public interface RoleRepository extends JpaRepository<RoleModel, Long> {
     Optional<RoleModel> findByName(RoleName name);
     boolean existsByName(RoleName name);
+    Iterable<RoleModel> findByNameIn(Iterable<RoleName> names);
 }

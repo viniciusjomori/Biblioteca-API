@@ -37,5 +37,19 @@ public class RoleController {
         RoleResponseDTO dto = mapper.toResponseDTO(model);
         return ResponseEntity.ok(dto);
     }
+
+    @GetMapping("{name}/or-above")
+    public ResponseEntity<Iterable<RoleResponseDTO>> getByNameOrAbove(@PathVariable String name) {
+        Iterable<RoleModel> roles = service.findByNameOrAbove(name);
+        Iterable<RoleResponseDTO> dtos = mapper.toListResponseDTO(roles);
+        return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("{name}/or-below")
+    public ResponseEntity<Iterable<RoleResponseDTO>> getByNameOrBelow(@PathVariable String name) {
+        Iterable<RoleModel> roles = service.findByNameOrBelow(name);
+        Iterable<RoleResponseDTO> dtos = mapper.toListResponseDTO(roles);
+        return ResponseEntity.ok(dtos);
+    }
     
 }
