@@ -35,6 +35,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "loan/**").hasRole("EMPLOYEE")
                 .requestMatchers(HttpMethod.POST, "loan/**").hasRole("EMPLOYEE")
                 .requestMatchers(HttpMethod.PUT, "loan/**").hasRole("EMPLOYEE")
+                .requestMatchers(HttpMethod.GET, "reserve/**").hasRole("EMPLOYEE")
+                .requestMatchers(HttpMethod.GET, "user").hasRole("EMPLOYEE")
                 .requestMatchers(HttpMethod.GET, "client/**").hasRole("CLIENT")
                 .requestMatchers(HttpMethod.POST, "client/reserve/**").hasRole("CLIENT")
                 .requestMatchers(HttpMethod.PUT, "client/reserve/**").hasRole("CLIENT")
