@@ -2,13 +2,10 @@ package com.br.Library.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,7 +14,6 @@ import com.br.Library.dto.EmployeeRequestDTO;
 import com.br.Library.enums.RoleName;
 import com.br.Library.model.RoleModel;
 import com.br.Library.model.UserModel;
-import com.br.Library.repository.RoleRepository;
 import com.br.Library.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -29,20 +25,16 @@ public class EmployeeService {
     private UserRepository userRepository;
 
     @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private RoleHierarchy roleHierarchy;
+    private RoleService roleService;
 
     public Iterable<UserModel> getAll() {
-        Iterable<RoleModel> allRoles = roleRepository.findAll();
+        Iterable<RoleModel> roles = roleService.findByNameOrAbove(RoleName.ROLE_EMPLOYEE.toString());
         Collection<UserModel> employees = new ArrayList<>();
-        for (RoleModel role : allRoles) {
-            if(isEmployee(role.getName().toString()))
-                employees.addAll(role.getUsers());
+        for(RoleModel role : roles) {
+            employees.addAll(role.getUsers());
         }
         return employees;
     }
@@ -53,7 +45,7 @@ public class EmployeeService {
             UserModel employee = new UserModel();
             employee.setUsername(dto.username());
             employee.setRole(
-                roleRepository.findByName(RoleName.valueOf(dto.role())).get()
+                roleService.findByName(dto.role())
             );
             employee.setPassword(passwordEncoder.encode(dto.password()));
             return userRepository.save(employee);
@@ -72,7 +64,7 @@ public class EmployeeService {
             UserModel employee = findById(id);
             employee.setUsername(dto.username());
             employee.setRole(
-                roleRepository.findByName(RoleName.valueOf(dto.role())).get()
+                roleService.findByName(dto.role())
             );
             employee.setPassword(passwordEncoder.encode(dto.password()));
             return userRepository.save(employee);
@@ -82,7 +74,6 @@ public class EmployeeService {
                 "The role must be a employee"
             );
         }
-        
     }
 
     public void deleteById(long id) {
@@ -109,8 +100,9 @@ public class EmployeeService {
     }
 
     private boolean isEmployee(String role) {
-        return roleHierarchy.getReachableGrantedAuthorities(
-            Collections.singleton(new SimpleGrantedAuthority(role)))
-            .contains(new SimpleGrantedAuthority("ROLE_EMPLOYEE"));
+        return roleService.contains(
+            roleService.toRoleName(role),
+            RoleName.ROLE_EMPLOYEE
+        );
     }
 }
