@@ -3,6 +3,7 @@ package com.br.Library.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,9 +17,11 @@ import com.br.Library.dto.ReserveResponseDTO;
 import com.br.Library.dto.UserRequestDTO;
 import com.br.Library.mapper.ClientMapper;
 import com.br.Library.mapper.ReserveMapper;
+import com.br.Library.model.LoanModel;
 import com.br.Library.model.ReserveModel;
 import com.br.Library.model.UserModel;
 import com.br.Library.service.ClientService;
+import com.br.Library.service.LoanService;
 import com.br.Library.service.ReserveService;
 
 import jakarta.validation.Valid;
@@ -30,6 +33,9 @@ public class ClientController {
     
     @Autowired
     private ClientService clientService;
+
+    @Autowired
+    private LoanService loanService;
 
     @Autowired
     private ReserveService reserveService;
@@ -45,6 +51,15 @@ public class ClientController {
         UserModel client = clientService.createClient(requestDTO);
         return ResponseEntity.ok(clientMapper.toResponseDTO(client));
     }
+
+    @GetMapping("/online")
+    public ResponseEntity<ClientResponseDTO> findOnlineClient(@RequestHeader("Authorization") String tokenJwt) {
+        UserModel client = clientService.findOnlineClient(tokenJwt);
+        Iterable<LoanModel> loans = loanService.findAllByClient(client.getId());
+        Iterable<ReserveModel> reserves = reserveService.findAllByClient(client.getId());
+        ClientResponseDTO dto = clientMapper.toResponseDTO(client, loans, reserves);
+        return ResponseEntity.ok(dto);
+    } 
 
     @PostMapping("reserve/{bookId}")
     public ResponseEntity<ReserveResponseDTO> createReserve(@PathVariable long bookId, @RequestHeader("Authorization") String tokenJwt) {
