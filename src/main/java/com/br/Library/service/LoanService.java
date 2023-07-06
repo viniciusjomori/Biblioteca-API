@@ -3,9 +3,11 @@ package com.br.Library.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.br.Library.dto.LoanRequestDTO;
+import com.br.Library.exceptions.ResponseStatusException;
 import com.br.Library.model.BookModel;
 import com.br.Library.model.LoanModel;
 import com.br.Library.model.UserModel;
@@ -38,7 +40,10 @@ public class LoanService {
         UserModel client = clientService.findById(clientId);
         BookModel book = bookService.findById(bookId);
         if(book.getAvailableCopies() == 0) {
-            throw new RuntimeException("unavailable book");
+            throw new ResponseStatusException(
+                "Unavailable book", 
+                HttpStatus.CONFLICT
+            );
         }
         LoanModel loan = new LoanModel();
         loan.setClient(client);
@@ -64,7 +69,10 @@ public class LoanService {
         if(optional.isPresent()) {
             return optional.get();
         } else {
-            throw new RuntimeException("loan not found");
+            throw new ResponseStatusException(
+                "Loan not found", 
+                HttpStatus.NOT_FOUND
+            );
         }
     }
 

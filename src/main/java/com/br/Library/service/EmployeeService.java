@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.br.Library.dto.EmployeeRequestDTO;
 import com.br.Library.enums.RoleName;
+import com.br.Library.exceptions.ResponseStatusException;
 import com.br.Library.model.RoleModel;
 import com.br.Library.model.UserModel;
 import com.br.Library.repository.RoleRepository;
@@ -41,7 +43,10 @@ public class EmployeeService {
     @Transactional
     public UserModel createEmployee(EmployeeRequestDTO dto) {
         if(!isEmployee(dto.role())) {
-            throw new RuntimeException("invalid role");
+            throw new ResponseStatusException(
+                "invalid role", 
+                HttpStatus.FORBIDDEN
+            );
         }
         UserModel employee = new UserModel();
         employee.setUsername(dto.username());
@@ -55,7 +60,10 @@ public class EmployeeService {
     @Transactional
     public UserModel updateEmployee(EmployeeRequestDTO dto, long id) {
         if(!isEmployee(dto.role())) {
-            throw new RuntimeException("invalid role");
+            throw new ResponseStatusException(
+                "invalid role", 
+                HttpStatus.FORBIDDEN
+            );
         }
         UserModel employee = findById(id);
         employee.setUsername(dto.username());
@@ -70,7 +78,10 @@ public class EmployeeService {
         if(userRepository.existsById(id)) {
             userRepository.deleteById(id);
         } else {
-            throw new RuntimeException("employee not found");
+            throw new ResponseStatusException(
+                "employee not found", 
+                HttpStatus.NOT_FOUND
+            );
         }
     }
 
@@ -79,7 +90,10 @@ public class EmployeeService {
         if (optional.isPresent()) {
             return optional.get();
         } else {
-            throw new RuntimeException("employee not found");
+            throw new ResponseStatusException(
+                "employee not found", 
+                HttpStatus.NOT_FOUND
+            );
         }
     }
 

@@ -3,9 +3,11 @@ package com.br.Library.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.br.Library.enums.ReserveStatus;
+import com.br.Library.exceptions.ResponseStatusException;
 import com.br.Library.model.BookModel;
 import com.br.Library.model.LoanModel;
 import com.br.Library.model.ReserveModel;
@@ -35,7 +37,10 @@ public class ReserveService {
         UserModel client = clientService.findOnlineClient(tokenJwt);
         BookModel book = bookService.findById(bookId);
         if(book.getAvailableCopies() == 0) {
-            throw new RuntimeException("unavailable book");
+            throw new ResponseStatusException(
+                "Unavailable book", 
+                HttpStatus.CONFLICT
+            );
         }
         ReserveModel reserve = new ReserveModel();
         reserve.setClient(client);
@@ -57,7 +62,10 @@ public class ReserveService {
             );
             return reserveRepository.save(reserve);
         } else {
-            throw new RuntimeException("sem autorização");
+            throw new ResponseStatusException(
+                "Unathorized", 
+                HttpStatus.FORBIDDEN
+            );
         }
         
     }
@@ -67,7 +75,10 @@ public class ReserveService {
         if(optional.isPresent()) {
             return optional.get();
         } else {
-            throw new RuntimeException("Reserve not found");
+            throw new ResponseStatusException(
+                "Reserve not found", 
+                HttpStatus.NOT_FOUND
+            );
         }
     }
 
@@ -83,14 +94,22 @@ public class ReserveService {
 
     public LoanModel createLoanFromReserve(long reserveId) {
         ReserveModel reserve = findById(reserveId);
-        reserve.getBook().setAvailableCopies(
+        if(reserve.getStatus() == ReserveStatus.ACTIVE) {
+            reserve.getBook().setAvailableCopies(
             reserve.getBook().getAvailableCopies() +1
-        );
-        reserve.setStatus(ReserveStatus.DONE);
-        reserveRepository.save(reserve);
-        return loanService.createLoan(
-            reserve.getClient().getId(),
-            reserve.getBook().getId()
-        );
+            );
+            reserve.setStatus(ReserveStatus.DONE);
+            reserveRepository.save(reserve);
+            return loanService.createLoan(
+                reserve.getClient().getId(),
+                reserve.getBook().getId()
+            );
+        } else {
+            throw new ResponseStatusException(
+            "The reserve is not active", 
+                HttpStatus.CONFLICT
+            );
+        }
+        
     }
 }

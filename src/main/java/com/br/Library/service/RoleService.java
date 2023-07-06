@@ -3,9 +3,11 @@ package com.br.Library.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.br.Library.enums.RoleName;
+import com.br.Library.exceptions.ResponseStatusException;
 import com.br.Library.model.RoleModel;
 import com.br.Library.repository.RoleRepository;
 
@@ -26,7 +28,10 @@ public class RoleService {
         if(optional.isPresent()) {
             return optional.get();
         } else {
-            throw new RuntimeException("Role not found");
+            throw new ResponseStatusException(
+                "Role not found", 
+                HttpStatus.NOT_FOUND
+            );
         }
     }
 }

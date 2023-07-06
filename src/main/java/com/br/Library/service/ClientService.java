@@ -3,12 +3,13 @@ package com.br.Library.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.br.Library.dto.UserRequestDTO;
 import com.br.Library.enums.RoleName;
-import com.br.Library.exceptions.user.UserNotFoundException;
+import com.br.Library.exceptions.ResponseStatusException;
 import com.br.Library.model.RoleModel;
 import com.br.Library.model.UserModel;
 import com.br.Library.repository.RoleRepository;
@@ -51,7 +52,10 @@ public class ClientService {
             }
         }
 
-        throw new UserNotFoundException(id);
+        throw new ResponseStatusException(
+            "Client not found", 
+            HttpStatus.NOT_FOUND
+        );
     }
 
     public UserModel findOnlineClient(String tokenJwt) {
@@ -61,6 +65,9 @@ public class ClientService {
         for (UserModel user : role.getUsers()) {
             if(user.getUsername().equals(username)) return user;
         }
-        throw new RuntimeException("client not found");
+        throw new ResponseStatusException(
+            "Client not found", 
+            HttpStatus.NOT_FOUND
+        );
     }
 }

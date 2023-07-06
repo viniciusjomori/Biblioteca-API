@@ -4,10 +4,11 @@ import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.br.Library.dto.BookRequestDTO;
-import com.br.Library.exceptions.book.BookNotFoundException;
+import com.br.Library.exceptions.ResponseStatusException;
 import com.br.Library.mapper.BookMapper;
 import com.br.Library.model.BookModel;
 import com.br.Library.repository.BookRepository;
@@ -37,14 +38,20 @@ public class BookService {
         if(optional.isPresent()) {
             return optional.get();
         } else {
-            throw new BookNotFoundException(id);
+            throw new ResponseStatusException(
+            "Book not found", 
+                HttpStatus.NOT_FOUND
+            );
         }
     }
 
     public boolean existsById(Long id) {
         boolean exists = repository.existsById(id);
         if (!exists) {
-            throw new BookNotFoundException(id);
+            throw new ResponseStatusException(
+            "Book not found", 
+                HttpStatus.NOT_FOUND
+            );
         }
         return exists;
     }
