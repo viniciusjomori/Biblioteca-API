@@ -30,6 +30,9 @@ public class ReserveService {
     public ReserveModel createReserve(long bookId, String tokenJwt) {
         UserModel client = clientService.findOnlineClient(tokenJwt);
         BookModel book = bookService.findById(bookId);
+        if(book.getAvailableCopies() == 0) {
+            throw new RuntimeException("unavailable book");
+        }
         ReserveModel reserve = new ReserveModel();
         reserve.setClient(client);
         reserve.setBook(book);

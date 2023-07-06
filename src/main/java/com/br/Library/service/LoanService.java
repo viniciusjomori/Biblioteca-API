@@ -30,6 +30,9 @@ public class LoanService {
     public LoanModel createLoan(LoanRequestDTO dto) {
         UserModel client = clientService.findById(dto.clientId());
         BookModel book = bookService.findById(dto.bookId());
+        if(book.getAvailableCopies() == 0) {
+            throw new RuntimeException("unavailable book");
+        }
         LoanModel loan = new LoanModel();
         loan.setClient(client);
         loan.setBook(book);
