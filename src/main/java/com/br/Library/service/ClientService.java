@@ -1,7 +1,5 @@
 package com.br.Library.service;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,7 +10,6 @@ import com.br.Library.dto.UserRequestDTO;
 import com.br.Library.enums.RoleName;
 import com.br.Library.model.RoleModel;
 import com.br.Library.model.UserModel;
-import com.br.Library.repository.RoleRepository;
 import com.br.Library.repository.UserRepository;
 import com.br.Library.security.TokenUtil;
 
@@ -22,17 +19,17 @@ import jakarta.transaction.Transactional;
 public class ClientService {
 
     @Autowired
-    private RoleRepository roleRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private RoleService roleService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     public Iterable<UserModel> getAll() {
-        Optional<RoleModel> clientRoleModel = roleRepository.findByName(RoleName.ROLE_CLIENT);
-        return clientRoleModel.get().getUsers(); 
+        RoleModel clientRoleModel = roleService.findByName(RoleName.ROLE_CLIENT);
+        return clientRoleModel.getUsers(); 
     }
 
     @Transactional
@@ -40,7 +37,9 @@ public class ClientService {
         UserModel client = new UserModel();
         client.setUsername(dto.username());
         client.setPassword(passwordEncoder.encode(dto.password()));
-        client.setRole(roleRepository.findByName(RoleName.ROLE_CLIENT).get());
+        client.setRole(
+            roleService.findByName(RoleName.ROLE_CLIENT)
+        );
         return userRepository.save(client);
     }
 
@@ -60,8 +59,8 @@ public class ClientService {
 
     public UserModel findOnlineClient(String tokenJwt) {
         String username = TokenUtil.getSubject(tokenJwt);
-        Optional<RoleModel> opt = roleRepository.findByName(RoleName.ROLE_CLIENT);
-        RoleModel role = opt.get();
+        RoleModel role = roleService.findByName(RoleName.ROLE_CLIENT)
+        ;
         for (UserModel user : role.getUsers()) {
             if(user.getUsername().equals(username)) return user;
         }

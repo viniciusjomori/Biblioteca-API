@@ -46,11 +46,25 @@ public class RoleService {
 
     public RoleModel findByName(String string) {
         RoleName roleName = toRoleName(string);
-        return repository.findByName(roleName).get();
+        return findByName(roleName);
+    }
+
+    public RoleModel findByName(RoleName name) {
+        return repository.findByName(name).get();
+    }
+
+    public boolean contains(RoleName thiz, RoleName that) {
+        return roleHierarchy.getReachableGrantedAuthorities(
+            Collections.singleton(new SimpleGrantedAuthority(thiz.toString())))
+            .contains(new SimpleGrantedAuthority(that.toString()));
     }
 
     public Iterable<RoleModel> findByNameOrAbove(String string) {
         RoleName roleName = toRoleName(string);
+        return findByNameOrAbove(roleName);
+    }
+
+    public Iterable<RoleModel> findByNameOrAbove(RoleName roleName) {
         Collection<RoleModel> allRoles = repository.findAll();
         Collection<RoleModel> findedRoles = new ArrayList<>();
         for(RoleModel role : allRoles) {
@@ -59,12 +73,6 @@ public class RoleService {
             }
         }
         return findedRoles;
-    }
-
-    public boolean contains(RoleName thiz, RoleName that) {
-        return roleHierarchy.getReachableGrantedAuthorities(
-            Collections.singleton(new SimpleGrantedAuthority(thiz.toString())))
-            .contains(new SimpleGrantedAuthority(that.toString()));
     }
 
     public Iterable<RoleModel> findByNameOrBelow(String string) {

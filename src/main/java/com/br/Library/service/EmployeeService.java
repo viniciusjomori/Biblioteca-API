@@ -31,7 +31,7 @@ public class EmployeeService {
     private RoleService roleService;
 
     public Iterable<UserModel> getAll() {
-        Iterable<RoleModel> roles = roleService.findByNameOrAbove(RoleName.ROLE_EMPLOYEE.toString());
+        Iterable<RoleModel> roles = roleService.findByNameOrAbove(RoleName.ROLE_EMPLOYEE);
         Collection<UserModel> employees = new ArrayList<>();
         for(RoleModel role : roles) {
             employees.addAll(role.getUsers());
