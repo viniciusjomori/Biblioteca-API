@@ -8,8 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import com.br.Library.exceptions.ResponseStatusException;
 import com.br.Library.model.UserModel;
 import com.br.Library.repository.UserRepository;
 
@@ -30,8 +30,8 @@ public class UserService implements UserDetailsService {
             return optional.get();
         } else {
             throw new ResponseStatusException(
-                "User not found", 
-                HttpStatus.NOT_FOUND
+                HttpStatus.NOT_FOUND,
+                "User not found"
             );
         }
     }
@@ -42,8 +42,8 @@ public class UserService implements UserDetailsService {
             return (UserModel) userDetails;
         } else {
             throw new ResponseStatusException(
-                "User not found", 
-                HttpStatus.NOT_FOUND
+                HttpStatus.NOT_FOUND,
+                "User not found"
             );
         }
         

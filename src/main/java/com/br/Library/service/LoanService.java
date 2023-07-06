@@ -5,9 +5,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.br.Library.dto.LoanRequestDTO;
-import com.br.Library.exceptions.ResponseStatusException;
 import com.br.Library.model.BookModel;
 import com.br.Library.model.LoanModel;
 import com.br.Library.model.UserModel;
@@ -39,29 +39,39 @@ public class LoanService {
     public LoanModel createLoan(long clientId, long bookId) {
         UserModel client = clientService.findById(clientId);
         BookModel book = bookService.findById(bookId);
-        if(book.getAvailableCopies() == 0) {
+        if(book.getAvailableCopies() > 0) {
+            LoanModel loan = new LoanModel();
+            loan.setClient(client);
+            loan.setBook(book);
+            loan.setDeliveryDate(loan.getLoanDate().plusDays(30));
+            loan.getBook().setAvailableCopies(
+                loan.getBook().getAvailableCopies() -1
+            );
+            return loanRepository.save(loan);
+        } else {
             throw new ResponseStatusException(
-                "Unavailable book", 
-                HttpStatus.CONFLICT
+                HttpStatus.CONFLICT,
+                "Unavailable book"
             );
         }
-        LoanModel loan = new LoanModel();
-        loan.setClient(client);
-        loan.setBook(book);
-        loan.setDeliveryDate(loan.getLoanDate().plusDays(30));
-        loan.getBook().setAvailableCopies(
-            loan.getBook().getAvailableCopies() -1
-        );
-        return loanRepository.save(loan);
+        
     }
 
     public LoanModel deliver(long id) {
         LoanModel loan = findById(id);
-        loan.setActive(false);
-        loan.getBook().setAvailableCopies(
-            loan.getBook().getAvailableCopies() +1
-        );
-        return loanRepository.save(loan);
+        if(loan.isActive()) {
+            loan.setActive(false);
+            loan.getBook().setAvailableCopies(
+                loan.getBook().getAvailableCopies() +1
+            );
+            return loanRepository.save(loan);
+        } else {
+            throw new ResponseStatusException(
+                HttpStatus.CONFLICT,
+                "Loan is not active"
+            );
+        }
+        
     }
 
     public LoanModel findById(long id) {
@@ -70,8 +80,8 @@ public class LoanService {
             return optional.get();
         } else {
             throw new ResponseStatusException(
-                "Loan not found", 
-                HttpStatus.NOT_FOUND
+                HttpStatus.NOT_FOUND,
+                "Loan not found"
             );
         }
     }

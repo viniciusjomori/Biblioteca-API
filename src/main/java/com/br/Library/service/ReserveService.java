@@ -5,9 +5,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.br.Library.enums.ReserveStatus;
-import com.br.Library.exceptions.ResponseStatusException;
 import com.br.Library.model.BookModel;
 import com.br.Library.model.LoanModel;
 import com.br.Library.model.ReserveModel;
@@ -36,20 +36,22 @@ public class ReserveService {
     public ReserveModel createReserve(long bookId, String tokenJwt) {
         UserModel client = clientService.findOnlineClient(tokenJwt);
         BookModel book = bookService.findById(bookId);
-        if(book.getAvailableCopies() == 0) {
+        if(book.getAvailableCopies() > 0) {
+            ReserveModel reserve = new ReserveModel();
+            reserve.setClient(client);
+            reserve.setBook(book);
+            reserve.setExpirationDate(reserve.getReserveDate().plusDays(7));
+            reserve.getBook().setAvailableCopies(
+                reserve.getBook().getAvailableCopies() -1
+            );
+            return reserveRepository.save(reserve);
+        } else {
             throw new ResponseStatusException(
-                "Unavailable book", 
-                HttpStatus.CONFLICT
+                HttpStatus.CONFLICT,
+                "Unavailable book"
             );
         }
-        ReserveModel reserve = new ReserveModel();
-        reserve.setClient(client);
-        reserve.setBook(book);
-        reserve.setExpirationDate(reserve.getReserveDate().plusDays(7));
-        reserve.getBook().setAvailableCopies(
-            reserve.getBook().getAvailableCopies() -1
-        );
-        return reserveRepository.save(reserve);
+        
     }
 
     public ReserveModel cancel(long id, String tokenJwt) {
@@ -63,8 +65,8 @@ public class ReserveService {
             return reserveRepository.save(reserve);
         } else {
             throw new ResponseStatusException(
-                "Unathorized", 
-                HttpStatus.FORBIDDEN
+                HttpStatus.FORBIDDEN,
+                "Unathorized"
             );
         }
         
@@ -76,8 +78,8 @@ public class ReserveService {
             return optional.get();
         } else {
             throw new ResponseStatusException(
-                "Reserve not found", 
-                HttpStatus.NOT_FOUND
+                HttpStatus.NOT_FOUND,
+                "Reserve not found"
             );
         }
     }
@@ -106,8 +108,8 @@ public class ReserveService {
             );
         } else {
             throw new ResponseStatusException(
-            "The reserve is not active", 
-                HttpStatus.CONFLICT
+                HttpStatus.CONFLICT,
+                "The reserve is not active"
             );
         }
         

@@ -9,10 +9,10 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.br.Library.dto.EmployeeRequestDTO;
 import com.br.Library.enums.RoleName;
-import com.br.Library.exceptions.ResponseStatusException;
 import com.br.Library.model.RoleModel;
 import com.br.Library.model.UserModel;
 import com.br.Library.repository.RoleRepository;
@@ -42,36 +42,40 @@ public class EmployeeService {
 
     @Transactional
     public UserModel createEmployee(EmployeeRequestDTO dto) {
-        if(!isEmployee(dto.role())) {
+        if(isEmployee(dto.role())) {
+            UserModel employee = new UserModel();
+            employee.setUsername(dto.username());
+            employee.setRole(
+                roleRepository.findByName(RoleName.valueOf(dto.role())).get()
+            );
+            employee.setPassword(passwordEncoder.encode(dto.password()));
+            return userRepository.save(employee);
+        } else {
             throw new ResponseStatusException(
-                "invalid role", 
-                HttpStatus.FORBIDDEN
+                HttpStatus.FORBIDDEN,
+                "The role must be a employee"
             );
         }
-        UserModel employee = new UserModel();
-        employee.setUsername(dto.username());
-        employee.setRole(
-            roleRepository.findByName(RoleName.valueOf(dto.role())).get()
-        );
-        employee.setPassword(passwordEncoder.encode(dto.password()));
-        return userRepository.save(employee);
+        
     }
 
     @Transactional
     public UserModel updateEmployee(EmployeeRequestDTO dto, long id) {
-        if(!isEmployee(dto.role())) {
+        if(isEmployee(dto.role())) {
+            UserModel employee = findById(id);
+            employee.setUsername(dto.username());
+            employee.setRole(
+                roleRepository.findByName(RoleName.valueOf(dto.role())).get()
+            );
+            employee.setPassword(passwordEncoder.encode(dto.password()));
+            return userRepository.save(employee);
+        } else {
             throw new ResponseStatusException(
-                "invalid role", 
-                HttpStatus.FORBIDDEN
+                HttpStatus.FORBIDDEN,
+                "The role must be a employee"
             );
         }
-        UserModel employee = findById(id);
-        employee.setUsername(dto.username());
-        employee.setRole(
-            roleRepository.findByName(RoleName.valueOf(dto.role())).get()
-        );
-        employee.setPassword(passwordEncoder.encode(dto.password()));
-        return userRepository.save(employee);
+        
     }
 
     public void deleteById(long id) {
@@ -79,8 +83,8 @@ public class EmployeeService {
             userRepository.deleteById(id);
         } else {
             throw new ResponseStatusException(
-                "employee not found", 
-                HttpStatus.NOT_FOUND
+                HttpStatus.NOT_FOUND,
+                "Employee not found"
             );
         }
     }
@@ -91,8 +95,8 @@ public class EmployeeService {
             return optional.get();
         } else {
             throw new ResponseStatusException(
-                "employee not found", 
-                HttpStatus.NOT_FOUND
+                HttpStatus.NOT_FOUND,
+                "Employee not found"
             );
         }
     }

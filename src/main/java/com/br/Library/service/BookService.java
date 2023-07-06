@@ -6,9 +6,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.br.Library.dto.BookRequestDTO;
-import com.br.Library.exceptions.ResponseStatusException;
 import com.br.Library.mapper.BookMapper;
 import com.br.Library.model.BookModel;
 import com.br.Library.repository.BookRepository;
@@ -39,21 +39,22 @@ public class BookService {
             return optional.get();
         } else {
             throw new ResponseStatusException(
-            "Book not found", 
-                HttpStatus.NOT_FOUND
+                HttpStatus.NOT_FOUND,
+                "Book not found"
             );
         }
     }
 
     public boolean existsById(Long id) {
         boolean exists = repository.existsById(id);
-        if (!exists) {
+        if (exists) {
+            return true;
+        } else {
             throw new ResponseStatusException(
-            "Book not found", 
-                HttpStatus.NOT_FOUND
+                HttpStatus.NOT_FOUND,
+                "Book not found"
             );
         }
-        return exists;
     }
 
     public BookModel updateBook(BookRequestDTO dto, Long id) {

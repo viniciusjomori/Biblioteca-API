@@ -3,9 +3,9 @@ package com.br.Library.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.br.Library.enums.RoleName;
-import com.br.Library.exceptions.ResponseStatusException;
 import com.br.Library.model.RoleModel;
 import com.br.Library.repository.RoleRepository;
 
@@ -29,8 +29,8 @@ public class RoleService {
             return repository.findByName(roleName).get();
         } catch(IllegalArgumentException e) {
             throw new ResponseStatusException(
-                "Role not found", 
-                HttpStatus.NOT_FOUND
+                HttpStatus.NOT_FOUND,
+                "Role not found"
             );
         }
     }
