@@ -16,6 +16,7 @@ import com.br.Library.dto.LoanResponseDTO;
 import com.br.Library.mapper.LoanMapper;
 import com.br.Library.model.LoanModel;
 import com.br.Library.service.LoanService;
+import com.br.Library.service.ReserveService;
 
 import jakarta.validation.Valid;
 
@@ -25,38 +26,47 @@ import jakarta.validation.Valid;
 public class LoanController {
     
     @Autowired
-    private LoanService service;
+    private LoanService loanService;
+
+    @Autowired
+    private ReserveService reserveService;
 
     @Autowired
     private LoanMapper mapper;
 
     @PostMapping
     public ResponseEntity<LoanResponseDTO> createLoan(@RequestBody @Valid LoanRequestDTO dto) {
-        LoanModel model = service.createLoan(dto);
+        LoanModel model = loanService.createLoan(dto);
         return ResponseEntity.ok(mapper.toResponseDTO(model));
     }
 
     @PutMapping("/deliver/{id}")
     public ResponseEntity<LoanResponseDTO> deliver(@PathVariable long id) {
-        LoanModel loan = service.deliver(id);
+        LoanModel loan = loanService.deliver(id);
         return ResponseEntity.ok(mapper.toResponseDTO(loan));
     }
 
     @GetMapping
     public ResponseEntity<Iterable<LoanResponseDTO>> getAll() {
-        Iterable<LoanModel> loans = service.getAll();
+        Iterable<LoanModel> loans = loanService.getAll();
         return ResponseEntity.ok(mapper.toListResponseDTO(loans));
     }
 
     @GetMapping("book/{bookId}")
     public ResponseEntity<Iterable<LoanResponseDTO>> getLoansByBook(@PathVariable long bookId) {
-        Iterable<LoanModel> loans = service.findAllByBook(bookId);
+        Iterable<LoanModel> loans = loanService.findAllByBook(bookId);
         return ResponseEntity.ok(mapper.toListResponseDTO(loans));
     }
 
     @GetMapping("client/{clientId}")
     public ResponseEntity<Iterable<LoanResponseDTO>> getLoansByClient(@PathVariable long clientId) {
-        Iterable<LoanModel> loans = service.findAllByClient(clientId);
+        Iterable<LoanModel> loans = loanService.findAllByClient(clientId);
         return ResponseEntity.ok(mapper.toListResponseDTO(loans));
+    }
+
+    @PostMapping("from-reserve/{reserveId}")
+    public ResponseEntity<LoanResponseDTO> fromReserve(@PathVariable long reserveId) {
+        LoanModel loan = reserveService.createLoanFromReserve(reserveId);
+        return ResponseEntity.ok(mapper.toResponseDTO(loan));
     }
 }

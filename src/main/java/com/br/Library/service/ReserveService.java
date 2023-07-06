@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.br.Library.enums.ReserveStatus;
 import com.br.Library.model.BookModel;
+import com.br.Library.model.LoanModel;
 import com.br.Library.model.ReserveModel;
 import com.br.Library.model.UserModel;
 import com.br.Library.repository.ReserveRepository;
@@ -21,7 +22,10 @@ public class ReserveService {
     private ClientService clientService;
     
     @Autowired
-    private BookService bookService;    
+    private BookService bookService;
+
+    @Autowired
+    private LoanService loanService;
 
     public Iterable<ReserveModel> getAll() {
         return reserveRepository.findAll();
@@ -75,5 +79,18 @@ public class ReserveService {
     public Iterable<ReserveModel> findAllByClient(long clientId) {
         UserModel client = clientService.findById(clientId);
         return reserveRepository.findAllByClient(client);
+    }
+
+    public LoanModel createLoanFromReserve(long reserveId) {
+        ReserveModel reserve = findById(reserveId);
+        reserve.getBook().setAvailableCopies(
+            reserve.getBook().getAvailableCopies() +1
+        );
+        reserve.setStatus(ReserveStatus.DONE);
+        reserveRepository.save(reserve);
+        return loanService.createLoan(
+            reserve.getClient().getId(),
+            reserve.getBook().getId()
+        );
     }
 }

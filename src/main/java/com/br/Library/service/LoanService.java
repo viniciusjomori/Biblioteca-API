@@ -28,8 +28,15 @@ public class LoanService {
     }
 
     public LoanModel createLoan(LoanRequestDTO dto) {
-        UserModel client = clientService.findById(dto.clientId());
-        BookModel book = bookService.findById(dto.bookId());
+        return createLoan(
+            dto.clientId(),
+            dto.bookId()
+        );
+    }
+
+    public LoanModel createLoan(long clientId, long bookId) {
+        UserModel client = clientService.findById(clientId);
+        BookModel book = bookService.findById(bookId);
         if(book.getAvailableCopies() == 0) {
             throw new RuntimeException("unavailable book");
         }
