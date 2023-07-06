@@ -1,5 +1,7 @@
 package com.br.Library.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -36,8 +38,13 @@ public class EmployeeService {
     private RoleHierarchy roleHierarchy;
 
     public Iterable<UserModel> getAll() {
-        Optional<RoleModel> optional = roleRepository.findByName(RoleName.ROLE_EMPLOYEE);
-        return optional.get().getUsers();
+        Iterable<RoleModel> allRoles = roleRepository.findAll();
+        Collection<UserModel> employees = new ArrayList<>();
+        for (RoleModel role : allRoles) {
+            if(isEmployee(role.getName().toString()))
+                employees.addAll(role.getUsers());
+        }
+        return employees;
     }
 
     @Transactional
