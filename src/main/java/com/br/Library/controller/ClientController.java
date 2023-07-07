@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -53,8 +52,8 @@ public class ClientController {
     }
 
     @GetMapping("/online")
-    public ResponseEntity<ClientResponseDTO> findOnlineClient(@RequestHeader("Authorization") String tokenJwt) {
-        UserModel client = clientService.findOnlineClient(tokenJwt);
+    public ResponseEntity<ClientResponseDTO> findOnlineClient() {
+        UserModel client = clientService.getAuthenticatedClient();
         Iterable<LoanModel> loans = loanService.findAllByClient(client.getId());
         Iterable<ReserveModel> reserves = reserveService.findAllByClient(client.getId());
         ClientResponseDTO dto = clientMapper.toResponseDTO(client, loans, reserves);
@@ -62,14 +61,14 @@ public class ClientController {
     } 
 
     @PostMapping("reserve/{bookId}")
-    public ResponseEntity<ReserveResponseDTO> createReserve(@PathVariable long bookId, @RequestHeader("Authorization") String tokenJwt) {
-        ReserveModel model = reserveService.createReserve(bookId, tokenJwt);
+    public ResponseEntity<ReserveResponseDTO> createReserve(@PathVariable long bookId) {
+        ReserveModel model = reserveService.createReserve(bookId);
         return ResponseEntity.ok(reserveMapper.toResponseDTO(model));
     }
 
     @PutMapping("/reserve/cancel/{id}")
-    public ResponseEntity<ReserveResponseDTO> cancel(@PathVariable long id, @RequestHeader("Authorization") String tokenJwt) {
-        ReserveModel reserve = reserveService.cancel(id, tokenJwt);
+    public ResponseEntity<ReserveResponseDTO> cancel(@PathVariable long id) {
+        ReserveModel reserve = reserveService.cancel(id);
         return ResponseEntity.ok(reserveMapper.toResponseDTO(reserve));
     }
 

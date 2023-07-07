@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -46,9 +47,8 @@ public class UserService implements UserDetailsService {
 
     public UserModel findById(Long id) {
         Optional<UserModel> optional = repository.findById(id);
-        if(optional.isPresent()) {
-            return optional.get();
-        } else {
+        if(optional.isPresent()) return optional.get();
+        else {
             throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "User not found"
@@ -58,9 +58,8 @@ public class UserService implements UserDetailsService {
 
     public UserModel findByUsername(String username) {
         UserDetails userDetails = loadUserByUsername(username);
-        if(userDetails != null) {
-            return (UserModel) userDetails;
-        } else {
+        if(userDetails != null) return (UserModel) userDetails;
+        else {
             throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "User not found"
@@ -70,6 +69,17 @@ public class UserService implements UserDetailsService {
 
     public void deleteById(long id) {
         repository.deleteById(id);
+    }
+
+    public UserModel getAuthenticatedUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal instanceof UserModel) return (UserModel) principal;
+        else {
+            throw new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED,
+                "The user is not authenticated"
+            );
+        }
     }
 
     @Override

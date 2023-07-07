@@ -33,8 +33,8 @@ public class ReserveService {
         return reserveRepository.findAll();
     }
 
-    public ReserveModel createReserve(long bookId, String tokenJwt) {
-        UserModel client = clientService.findOnlineClient(tokenJwt);
+    public ReserveModel createReserve(long bookId) {
+        UserModel client = clientService.getAuthenticatedClient();
         BookModel book = bookService.findById(bookId);
         if(book.getAvailableCopies() > 0) {
             ReserveModel reserve = new ReserveModel();
@@ -54,8 +54,8 @@ public class ReserveService {
         
     }
 
-    public ReserveModel cancel(long id, String tokenJwt) {
-        UserModel client = clientService.findOnlineClient(tokenJwt);
+    public ReserveModel cancel(long id) {
+        UserModel client = clientService.getAuthenticatedClient();
         ReserveModel reserve = findById(id);
         if(!reserve.getClient().equals(client)) {
             throw new ResponseStatusException(

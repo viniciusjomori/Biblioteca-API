@@ -9,8 +9,6 @@ import com.br.Library.dto.UserRequestDTO;
 import com.br.Library.enums.RoleName;
 import com.br.Library.model.RoleModel;
 import com.br.Library.model.UserModel;
-import com.br.Library.repository.UserRepository;
-import com.br.Library.security.TokenUtil;
 
 import jakarta.transaction.Transactional;
 
@@ -18,7 +16,7 @@ import jakarta.transaction.Transactional;
 public class ClientService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
     private RoleService roleService;
@@ -36,7 +34,7 @@ public class ClientService {
         client.setRole(
             roleService.findByName(RoleName.ROLE_CLIENT)
         );
-        return userRepository.save(client);
+        return userService.createUser(client);
     }
 
     public UserModel findById(long id) {
@@ -53,17 +51,15 @@ public class ClientService {
         );
     }
 
-    public UserModel findOnlineClient(String tokenJwt) {
-        String username = TokenUtil.getSubject(tokenJwt);
-        RoleModel role = roleService.findByName(RoleName.ROLE_CLIENT)
-        ;
-        for (UserModel user : role.getUsers()) {
-            if(user.getUsername().equals(username)) return user;
+    public UserModel getAuthenticatedClient() {
+        UserModel user = userService.getAuthenticatedUser();
+        if(isClient(user)) return user;
+        else {
+            throw new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED,
+                "The user is not an client"
+            );
         }
-        throw new ResponseStatusException(
-            HttpStatus.NOT_FOUND,
-            "Client not found"
-        );
     }
 
     public boolean isClient(UserModel user) {
