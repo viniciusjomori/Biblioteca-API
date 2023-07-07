@@ -57,18 +57,23 @@ public class ReserveService {
     public ReserveModel cancel(long id, String tokenJwt) {
         UserModel client = clientService.findOnlineClient(tokenJwt);
         ReserveModel reserve = findById(id);
-        if(reserve.getClient().equals(client)) {
-            reserve.setStatus(ReserveStatus.CANCELED);
-            reserve.getBook().setAvailableCopies(
-                reserve.getBook().getAvailableCopies() +1
-            );
-            return reserveRepository.save(reserve);
-        } else {
+        if(!reserve.getClient().equals(client)) {
             throw new ResponseStatusException(
                 HttpStatus.FORBIDDEN,
                 "Unathorized"
             );
+        } else if(reserve.getStatus() != ReserveStatus.ACTIVE) {
+            throw new ResponseStatusException(
+                HttpStatus.CONFLICT,
+                "Reserve is not active"
+            );
         }
+        
+        reserve.setStatus(ReserveStatus.CANCELED);
+        reserve.getBook().setAvailableCopies(
+            reserve.getBook().getAvailableCopies() +1
+        );
+        return reserveRepository.save(reserve);
         
     }
 
