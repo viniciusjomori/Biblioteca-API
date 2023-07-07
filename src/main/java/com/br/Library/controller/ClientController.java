@@ -29,7 +29,7 @@ import com.br.Library.service.ReserveService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/client")
+@RequestMapping("/client/online")
 @CrossOrigin(origins = "*")
 public class ClientController {
     
@@ -57,7 +57,7 @@ public class ClientController {
         return ResponseEntity.ok(clientMapper.toResponseDTO(client));
     }
 
-    @GetMapping("/online")
+    @GetMapping
     public ResponseEntity<ClientResponseDTO> findOnlineClient() {
         UserModel client = clientService.getAuthenticatedClient();
         Iterable<LoanModel> loans = loanService.findAllByClient(client.getId());
@@ -66,7 +66,7 @@ public class ClientController {
         return ResponseEntity.ok(dto);
     }
 
-    @DeleteMapping("online")
+    @DeleteMapping
     public ResponseEntity<ResponseMessage> deleteAuthenticatedClient() {
         clientService.deleteAuthenticatedClient();
         responseMessage.setMessage("Deleted successfully");
