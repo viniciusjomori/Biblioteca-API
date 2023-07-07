@@ -39,7 +39,7 @@ public class EmployeeController {
     @GetMapping
     public ResponseEntity<Iterable<UserInfo>> getAll() {
         Iterable<UserModel> users = service.getAll();
-        return ResponseEntity.ok(mapper.toListResponseDTO(users));
+        return ResponseEntity.ok(mapper.toListInfo(users));
     }
 
     @PostMapping

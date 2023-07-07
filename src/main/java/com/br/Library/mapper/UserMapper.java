@@ -15,7 +15,7 @@ import com.br.Library.model.UserModel;
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    Iterable<UserInfo> toListResponseDTO(Iterable<UserModel> users);
+    Iterable<UserInfo> toListInfo(Iterable<UserModel> users);
 
     @Mapping(source = "role", target = "role", qualifiedByName = "roleModelToName")
     UserInfo toInfo(UserModel model);
