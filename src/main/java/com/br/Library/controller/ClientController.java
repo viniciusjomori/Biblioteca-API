@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.Library.dto.ClientResponseDTO;
+import com.br.Library.dto.LoanResponseDTO;
 import com.br.Library.dto.ReserveResponseDTO;
 import com.br.Library.dto.ResponseMessage;
 import com.br.Library.dto.UserRequestDTO;
 import com.br.Library.mapper.ClientMapper;
+import com.br.Library.mapper.LoanMapper;
 import com.br.Library.mapper.ReserveMapper;
 import com.br.Library.model.LoanModel;
 import com.br.Library.model.ReserveModel;
@@ -49,6 +51,9 @@ public class ClientController {
     private ReserveMapper reserveMapper;
 
     @Autowired
+    private LoanMapper loanMapper;
+
+    @Autowired
     private ResponseMessage responseMessage;
 
     @PostMapping
@@ -74,6 +79,13 @@ public class ClientController {
         return ResponseEntity.ok(responseMessage);
     }
 
+    @GetMapping("reserve")
+    public ResponseEntity<Iterable<ReserveResponseDTO>> getReserves() {
+        UserModel user = clientService.getAuthenticatedClient();
+        Iterable<ReserveModel> reserves = reserveService.findAllByClient(user.getId());
+        return ResponseEntity.ok(reserveMapper.toListResponseDTO(reserves));
+    }
+
     @PostMapping("reserve/{bookId}")
     public ResponseEntity<ReserveResponseDTO> createReserve(@PathVariable long bookId) {
         ReserveModel model = reserveService.createReserve(bookId);
@@ -84,6 +96,13 @@ public class ClientController {
     public ResponseEntity<ReserveResponseDTO> cancel(@PathVariable long id) {
         ReserveModel reserve = reserveService.cancel(id);
         return ResponseEntity.ok(reserveMapper.toResponseDTO(reserve));
+    }
+
+    @GetMapping("loan")
+    public ResponseEntity<Iterable<LoanResponseDTO>> getLoans() {
+        UserModel user = clientService.getAuthenticatedClient();
+        Iterable<LoanModel> loans = loanService.findAllByClient(user.getId());
+        return ResponseEntity.ok(loanMapper.toListResponseDTO(loans));
     }
 
 }
