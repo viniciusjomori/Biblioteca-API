@@ -41,13 +41,13 @@ public class EmployeeService {
 
     @Transactional
     public UserModel createEmployee(EmployeeRequestDTO dto) {
-        if(isEmployee(dto.role())) {
+        if(isEmployee(dto.getRole())) {
             UserModel employee = new UserModel();
-            employee.setUsername(dto.username());
+            employee.setUsername(dto.getUsername());
             employee.setRole(
-                roleService.findByName(dto.role())
+                roleService.findByName(dto.getRole())
             );
-            employee.setPassword(passwordEncoder.encode(dto.password()));
+            employee.setPassword(passwordEncoder.encode(dto.getPassword()));
             return userRepository.save(employee);
         } else {
             throw new ResponseStatusException(
@@ -60,13 +60,13 @@ public class EmployeeService {
 
     @Transactional
     public UserModel updateEmployee(EmployeeRequestDTO dto, long id) {
-        if(isEmployee(dto.role())) {
+        if(isEmployee(dto.getRole())) {
             UserModel employee = findById(id);
-            employee.setUsername(dto.username());
+            employee.setUsername(dto.getUsername());
             employee.setRole(
-                roleService.findByName(dto.role())
+                roleService.findByName(dto.getRole())
             );
-            employee.setPassword(passwordEncoder.encode(dto.password()));
+            employee.setPassword(passwordEncoder.encode(dto.getPassword()));
             return userRepository.save(employee);
         } else {
             throw new ResponseStatusException(
@@ -99,9 +99,9 @@ public class EmployeeService {
         }
     }
 
-    private boolean isEmployee(String role) {
+    private boolean isEmployee(RoleName roleName) {
         return roleService.contains(
-            roleService.toRoleName(role),
+            roleName,
             RoleName.ROLE_EMPLOYEE
         );
     }

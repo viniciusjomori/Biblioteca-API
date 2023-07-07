@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.Library.dto.RoleResponseDTO;
+import com.br.Library.enums.RoleName;
 import com.br.Library.mapper.RoleMapper;
 import com.br.Library.model.RoleModel;
 import com.br.Library.service.RoleService;
@@ -40,14 +41,16 @@ public class RoleController {
 
     @GetMapping("{name}/or-above")
     public ResponseEntity<Iterable<RoleResponseDTO>> getByNameOrAbove(@PathVariable String name) {
-        Iterable<RoleModel> roles = service.findByNameOrAbove(name);
+        RoleName roleName = service.toRoleName(name);
+        Iterable<RoleModel> roles = service.findByNameOrAbove(roleName);
         Iterable<RoleResponseDTO> dtos = mapper.toListResponseDTO(roles);
         return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("{name}/or-below")
     public ResponseEntity<Iterable<RoleResponseDTO>> getByNameOrBelow(@PathVariable String name) {
-        Iterable<RoleModel> roles = service.findByNameOrBelow(name);
+        RoleName roleName = service.toRoleName(name);
+        Iterable<RoleModel> roles = service.findByNameOrBelow(roleName);
         Iterable<RoleResponseDTO> dtos = mapper.toListResponseDTO(roles);
         return ResponseEntity.ok(dtos);
     }

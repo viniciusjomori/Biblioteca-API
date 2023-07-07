@@ -59,10 +59,6 @@ public class RoleService {
             .contains(new SimpleGrantedAuthority(that.toString()));
     }
 
-    public Iterable<RoleModel> findByNameOrAbove(String string) {
-        RoleName roleName = toRoleName(string);
-        return findByNameOrAbove(roleName);
-    }
 
     public Iterable<RoleModel> findByNameOrAbove(RoleName roleName) {
         Collection<RoleModel> allRoles = repository.findAll();
@@ -73,11 +69,6 @@ public class RoleService {
             }
         }
         return findedRoles;
-    }
-
-    public Iterable<RoleModel> findByNameOrBelow(String string) {
-        RoleName roleName = toRoleName(string);
-        return findByNameOrBelow(roleName);
     }
 
     public Iterable<RoleModel> findByNameOrBelow(RoleName role) {
@@ -91,7 +82,5 @@ public class RoleService {
         }
         return repository.findByNameIn(roleNames);
     }
-
-    
 
 }
