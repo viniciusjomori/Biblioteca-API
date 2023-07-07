@@ -22,7 +22,7 @@ public interface RoleMapper {
 
     @Named("modelsToDTOs")
     default Iterable<UserInfo> modelsToDTOs(Iterable<UserModel> userModels) {
-        return Mappers.getMapper(UserMapper.class).toListResponseDTO(userModels);
+        return Mappers.getMapper(UserMapper.class).toListInfo(userModels);
     }
 
 }
