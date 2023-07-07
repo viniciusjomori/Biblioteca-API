@@ -2,7 +2,6 @@ package com.br.Library.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -24,9 +23,6 @@ public class ClientService {
     @Autowired
     private RoleService roleService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     public Iterable<UserModel> getAll() {
         RoleModel clientRoleModel = roleService.findByName(RoleName.ROLE_CLIENT);
         return clientRoleModel.getUsers(); 
@@ -36,7 +32,7 @@ public class ClientService {
     public UserModel createClient(UserRequestDTO dto) {
         UserModel client = new UserModel();
         client.setUsername(dto.username());
-        client.setPassword(passwordEncoder.encode(dto.password()));
+        client.setPassword(dto.password());
         client.setRole(
             roleService.findByName(RoleName.ROLE_CLIENT)
         );
@@ -68,5 +64,9 @@ public class ClientService {
             HttpStatus.NOT_FOUND,
             "Client not found"
         );
+    }
+
+    public boolean isClient(UserModel user) {
+        return user.getRole().getName() == RoleName.ROLE_CLIENT;
     }
 }

@@ -2,11 +2,13 @@ package com.br.Library.service;
 
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -19,9 +21,27 @@ public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository repository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     public Iterable<UserModel> getAll() {
         return repository.findAll();
+    }
+
+    public UserModel createUser(UserModel user) {
+        user.setId(Long.valueOf(0));
+        return repository.save(user);
+    }
+
+    public UserModel updateUser(UserModel newUser, long id) {
+        UserModel user = findById(id);
+        BeanUtils.copyProperties(newUser, user);
+        user.setId(id);
+        user.setPassword(
+            passwordEncoder.encode(user.getPassword())
+        );
+        return repository.save(user);
     }
 
     public UserModel findById(Long id) {
@@ -46,7 +66,10 @@ public class UserService implements UserDetailsService {
                 "User not found"
             );
         }
-        
+    }
+
+    public void deleteById(long id) {
+        repository.deleteById(id);
     }
 
     @Override
