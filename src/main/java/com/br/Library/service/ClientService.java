@@ -62,6 +62,11 @@ public class ClientService {
         }
     }
 
+    public void deleteAuthenticatedClient(){
+        UserModel user = getAuthenticatedClient();
+        userService.deleteById(user.getId());
+    } 
+
     public boolean isClient(UserModel user) {
         return user.getRole().getName() == RoleName.ROLE_CLIENT;
     }

@@ -1,8 +1,10 @@
 package com.br.Library.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.br.Library.dto.ClientResponseDTO;
 import com.br.Library.dto.ReserveResponseDTO;
+import com.br.Library.dto.ResponseMessage;
 import com.br.Library.dto.UserRequestDTO;
 import com.br.Library.mapper.ClientMapper;
 import com.br.Library.mapper.ReserveMapper;
@@ -45,6 +48,9 @@ public class ClientController {
     @Autowired
     private ReserveMapper reserveMapper;
 
+    @Autowired
+    private ResponseMessage responseMessage;
+
     @PostMapping
     public ResponseEntity<ClientResponseDTO> createClient(@RequestBody @Valid UserRequestDTO requestDTO) {
         UserModel client = clientService.createClient(requestDTO);
@@ -58,7 +64,15 @@ public class ClientController {
         Iterable<ReserveModel> reserves = reserveService.findAllByClient(client.getId());
         ClientResponseDTO dto = clientMapper.toResponseDTO(client, loans, reserves);
         return ResponseEntity.ok(dto);
-    } 
+    }
+
+    @DeleteMapping("online")
+    public ResponseEntity<ResponseMessage> deleteAuthenticatedClient() {
+        clientService.deleteAuthenticatedClient();
+        responseMessage.setMessage("Deleted successfully");
+        responseMessage.setHttpStatus(HttpStatus.OK);
+        return ResponseEntity.ok(responseMessage);
+    }
 
     @PostMapping("reserve/{bookId}")
     public ResponseEntity<ReserveResponseDTO> createReserve(@PathVariable long bookId) {
