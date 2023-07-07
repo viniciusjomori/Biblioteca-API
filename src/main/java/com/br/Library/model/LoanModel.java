@@ -2,9 +2,13 @@ package com.br.Library.model;
 
 import java.time.LocalDate;
 
+import com.br.Library.enums.LoanStatus;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,11 +33,11 @@ public class LoanModel {
     private LocalDate loanDate;
     @Column
     private LocalDate deliveryDate;
-    @Column
-    private boolean active;
+    @Enumerated(EnumType.STRING)
+    private LoanStatus status;
 
     public LoanModel() {
-        this.active = true;
+        this.status = LoanStatus.ACTIVE;
         this.loanDate = LocalDate.now();
     }
 }

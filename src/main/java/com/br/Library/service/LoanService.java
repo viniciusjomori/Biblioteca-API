@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.br.Library.dto.LoanRequestDTO;
+import com.br.Library.enums.LoanStatus;
 import com.br.Library.model.BookModel;
 import com.br.Library.model.LoanModel;
 import com.br.Library.model.UserModel;
@@ -59,8 +60,8 @@ public class LoanService {
 
     public LoanModel deliver(long id) {
         LoanModel loan = findById(id);
-        if(loan.isActive()) {
-            loan.setActive(false);
+        if(loan.getStatus() != LoanStatus.DELIVERED) {
+            loan.setStatus(LoanStatus.DELIVERED);
             loan.getBook().setAvailableCopies(
                 loan.getBook().getAvailableCopies() +1
             );
