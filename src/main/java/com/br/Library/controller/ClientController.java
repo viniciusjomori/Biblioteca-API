@@ -24,6 +24,7 @@ import com.br.Library.mapper.ReserveMapper;
 import com.br.Library.model.LoanModel;
 import com.br.Library.model.ReserveModel;
 import com.br.Library.model.UserModel;
+import com.br.Library.security.TokenUtil;
 import com.br.Library.service.ClientService;
 import com.br.Library.service.LoanService;
 import com.br.Library.service.ReserveService;
@@ -60,6 +61,12 @@ public class ClientController {
     public ResponseEntity<ClientResponseDTO> createClient(@RequestBody @Valid UserRequestDTO requestDTO) {
         UserModel client = clientService.createClient(requestDTO);
         return ResponseEntity.ok(clientMapper.toResponseDTO(client));
+    }
+
+    @PutMapping
+    public ResponseEntity<String> updateClient(@RequestBody @Valid UserRequestDTO requestDTO) {
+        UserModel client = clientService.updateClient(requestDTO);
+        return ResponseEntity.ok(TokenUtil.encodeToken(client.getUsername()));
     }
 
     @GetMapping

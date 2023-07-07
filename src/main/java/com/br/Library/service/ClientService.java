@@ -37,6 +37,14 @@ public class ClientService {
         return userService.createUser(client);
     }
 
+    @Transactional
+    public UserModel updateClient(UserRequestDTO dto) {
+        UserModel user = getAuthenticatedClient();
+        user.setUsername(dto.username());
+        user.setPassword(dto.password());
+        return userService.updateUser(user, user.getId());
+    }
+
     public UserModel findById(long id) {
         Iterable<UserModel> clients = getAll();
         for(UserModel client : clients) {
