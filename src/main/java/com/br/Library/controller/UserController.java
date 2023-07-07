@@ -53,4 +53,10 @@ public class UserController {
         UserModel user = service.getAuthenticatedUser();
         return ResponseEntity.ok(mapper.toInfo(user));
     }
+
+    @GetMapping
+    public ResponseEntity<Iterable<UserInfo>> getAll() {
+        Iterable<UserModel> users = service.getAll();
+        return ResponseEntity.ok(mapper.toListInfo(users));
+    }
 }
