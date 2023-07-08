@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,7 +39,7 @@ public class LoanController {
         return ResponseEntity.ok(mapper.toResponseDTO(model));
     }
 
-    @PutMapping("/deliver/{id}")
+    @PostMapping("/deliver/{id}")
     public ResponseEntity<LoanResponseDTO> deliver(@PathVariable long id) {
         LoanModel loan = loanService.deliver(id);
         return ResponseEntity.ok(mapper.toResponseDTO(loan));

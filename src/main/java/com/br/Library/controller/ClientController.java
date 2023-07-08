@@ -93,13 +93,13 @@ public class ClientController {
         return ResponseEntity.ok(reserveMapper.toListResponseDTO(reserves));
     }
 
-    @PostMapping("reserve/{bookId}")
+    @PostMapping("reserve/book/{bookId}")
     public ResponseEntity<ReserveResponseDTO> createReserve(@PathVariable long bookId) {
         ReserveModel model = reserveService.createReserve(bookId);
         return ResponseEntity.ok(reserveMapper.toResponseDTO(model));
     }
 
-    @PutMapping("/reserve/cancel/{id}")
+    @PostMapping("reserve/{id}/cancel")
     public ResponseEntity<ReserveResponseDTO> cancel(@PathVariable long id) {
         ReserveModel reserve = reserveService.cancel(id);
         return ResponseEntity.ok(reserveMapper.toResponseDTO(reserve));
