@@ -32,6 +32,9 @@ public class UserService implements UserDetailsService {
 
     public UserModel createUser(UserModel user) {
         user.setId(Long.valueOf(0));
+        user.setPassword(
+            passwordEncoder.encode(user.getPassword())
+        );
         return repository.save(user);
     }
 
