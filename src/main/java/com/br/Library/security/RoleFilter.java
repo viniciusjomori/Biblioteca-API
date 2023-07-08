@@ -1,6 +1,7 @@
 package com.br.Library.security;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,10 +30,18 @@ public class RoleFilter extends OncePerRequestFilter {
         String subject = TokenUtil.getSubject(request);
 
         if(subject != null) {
-            UserModel user = userRepository.findByUsername(subject).get();
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+
+            Optional<UserModel> optional = userRepository.findByUsername(subject);
+
+            if(optional.isPresent()) {
+                UserModel user = optional.get();
+                
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 user, null, user.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+
+            
         }
         filterChain.doFilter(request, response);
     }
