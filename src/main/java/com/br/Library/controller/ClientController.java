@@ -32,7 +32,7 @@ import com.br.Library.service.ReserveService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/client/online")
+@RequestMapping("/client")
 @CrossOrigin(origins = "*")
 public class ClientController {
     
@@ -63,13 +63,13 @@ public class ClientController {
         return ResponseEntity.ok(clientMapper.toResponseDTO(client));
     }
 
-    @PutMapping
+    @PutMapping("online")
     public ResponseEntity<String> updateClient(@RequestBody @Valid UserRequestDTO requestDTO) {
         UserModel client = clientService.updateClient(requestDTO);
         return ResponseEntity.ok(TokenUtil.encodeToken(client.getUsername()));
     }
 
-    @GetMapping
+    @GetMapping("online")
     public ResponseEntity<ClientResponseDTO> findOnlineClient() {
         UserModel client = clientService.getAuthenticatedClient();
         Iterable<LoanModel> loans = loanService.findAllByClient(client.getId());
@@ -78,7 +78,7 @@ public class ClientController {
         return ResponseEntity.ok(dto);
     }
 
-    @DeleteMapping
+    @DeleteMapping("online")
     public ResponseEntity<ResponseMessage> deleteAuthenticatedClient() {
         clientService.deleteAuthenticatedClient();
         responseMessage.setMessage("Deleted successfully");
@@ -86,26 +86,26 @@ public class ClientController {
         return ResponseEntity.ok(responseMessage);
     }
 
-    @GetMapping("reserve")
+    @GetMapping("online/reserve")
     public ResponseEntity<Iterable<ReserveResponseDTO>> getReserves() {
         UserModel user = clientService.getAuthenticatedClient();
         Iterable<ReserveModel> reserves = reserveService.findAllByClient(user.getId());
         return ResponseEntity.ok(reserveMapper.toListResponseDTO(reserves));
     }
 
-    @PostMapping("reserve/book/{bookId}")
+    @PostMapping("online/reserve/book/{bookId}")
     public ResponseEntity<ReserveResponseDTO> createReserve(@PathVariable long bookId) {
         ReserveModel model = reserveService.createReserve(bookId);
         return ResponseEntity.ok(reserveMapper.toResponseDTO(model));
     }
 
-    @PostMapping("reserve/{id}/cancel")
+    @PostMapping("online/reserve/{id}/cancel")
     public ResponseEntity<ReserveResponseDTO> cancel(@PathVariable long id) {
         ReserveModel reserve = reserveService.cancel(id);
         return ResponseEntity.ok(reserveMapper.toResponseDTO(reserve));
     }
 
-    @GetMapping("loan")
+    @GetMapping("online/loan")
     public ResponseEntity<Iterable<LoanResponseDTO>> getLoans() {
         UserModel user = clientService.getAuthenticatedClient();
         Iterable<LoanModel> loans = loanService.findAllByClient(user.getId());
