@@ -117,6 +117,22 @@ public class ReserveService {
                 "The reserve is not active"
             );
         }
-        
+    }
+
+    public Iterable<ReserveModel> findAllByStatus(String string) {
+        ReserveStatus status = toReserveStatus(string);
+        return reserveRepository.findAllByStatus(status);
+    }
+
+    public ReserveStatus toReserveStatus(String string) {
+        string = string.toUpperCase();
+        try {
+            return ReserveStatus.valueOf(string);
+        } catch(IllegalArgumentException e) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Reserve status not found"
+            );
+        }
     }
 }

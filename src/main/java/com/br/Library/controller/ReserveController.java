@@ -42,4 +42,11 @@ public class ReserveController {
         Iterable<ReserveModel> reserves = service.findAllByClient(clientId);
         return ResponseEntity.ok(mapper.toListResponseDTO(reserves));
     }
+
+    @GetMapping("status/{status}")
+    public ResponseEntity<Iterable<ReserveResponseDTO>> getAllByStatus(@PathVariable String status) {
+        Iterable<ReserveModel> reserves = service.findAllByStatus(status);
+        return ResponseEntity.ok(mapper.toListResponseDTO(reserves));
+    }
+
 }
