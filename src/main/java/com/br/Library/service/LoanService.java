@@ -96,4 +96,21 @@ public class LoanService {
         UserModel client = clientService.findById(clientId);
         return loanRepository.findAllByClient(client);
     }
+
+    public Iterable<LoanModel> findAllByStatus(String string) {
+        LoanStatus status = toLoanStatus(string);
+        return loanRepository.findAllByStatus(status);
+    }
+
+    public LoanStatus toLoanStatus(String string) {
+        string = string.toUpperCase();
+        try {
+            return LoanStatus.valueOf(string);
+        } catch(IllegalArgumentException e) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Loan status not found"
+            );
+        }
+    }
 }

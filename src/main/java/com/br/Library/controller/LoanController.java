@@ -64,6 +64,12 @@ public class LoanController {
         return ResponseEntity.ok(mapper.toListResponseDTO(loans));
     }
 
+    @GetMapping("status/{status}")
+    public ResponseEntity<Iterable<LoanResponseDTO>> getLoansByStatus(@PathVariable String status) {
+        Iterable<LoanModel> loans = loanService.findAllByStatus(status);
+        return ResponseEntity.ok(mapper.toListResponseDTO(loans));
+    }
+
     @PostMapping("from-reserve/{reserveId}")
     public ResponseEntity<LoanResponseDTO> fromReserve(@PathVariable long reserveId) {
         LoanModel loan = reserveService.createLoanFromReserve(reserveId);
