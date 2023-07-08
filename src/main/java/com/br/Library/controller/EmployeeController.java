@@ -49,7 +49,7 @@ public class EmployeeController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<UserInfo> createEmployee(@RequestBody @Valid EmployeeRequestDTO dto, @PathVariable Long id) {
+    public ResponseEntity<UserInfo> editEmployee(@RequestBody @Valid EmployeeRequestDTO dto, @PathVariable Long id) {
         UserModel model = service.updateEmployee(dto, id);
         return ResponseEntity.ok(mapper.toInfo(model));
     }
