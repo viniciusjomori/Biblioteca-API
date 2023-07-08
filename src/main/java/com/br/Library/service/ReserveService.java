@@ -57,7 +57,7 @@ public class ReserveService {
     public ReserveModel cancel(long id) {
         UserModel client = clientService.getAuthenticatedClient();
         ReserveModel reserve = findById(id);
-        if(!reserve.getClient().equals(client)) {
+        if(reserve.getClient().getId() != client.getId()) {
             throw new ResponseStatusException(
                 HttpStatus.FORBIDDEN,
                 "Unathorized"
