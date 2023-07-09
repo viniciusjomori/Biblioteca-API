@@ -42,7 +42,7 @@ public class EmployeeService {
                 roleService.findByName(dto.getRole())
             );
             employee.setPassword(dto.getPassword());
-            return userService.createUser(employee);
+            return userService.save(employee);
         } else {
             throw new ResponseStatusException(
                 HttpStatus.FORBIDDEN,
@@ -60,7 +60,7 @@ public class EmployeeService {
                 roleService.findByName(dto.getRole())
             );
             user.setPassword(dto.getPassword());
-            return userService.updateUser(user, id);
+            return userService.save(user);
         } else {
             throw new ResponseStatusException(
                 HttpStatus.FORBIDDEN,

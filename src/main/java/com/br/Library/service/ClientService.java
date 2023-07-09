@@ -34,7 +34,7 @@ public class ClientService {
         client.setRole(
             roleService.findByName(RoleName.ROLE_CLIENT)
         );
-        return userService.createUser(client);
+        return userService.save(client);
     }
 
     @Transactional
@@ -42,7 +42,7 @@ public class ClientService {
         UserModel user = getAuthenticatedClient();
         user.setUsername(dto.username());
         user.setPassword(dto.password());
-        return userService.updateUser(user, user.getId());
+        return userService.save(user);
     }
 
     public UserModel findById(long id) {

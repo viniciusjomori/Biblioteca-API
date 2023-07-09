@@ -2,7 +2,6 @@ package com.br.Library.service;
 
 import java.util.Optional;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,18 +29,7 @@ public class UserService implements UserDetailsService {
         return repository.findAll();
     }
 
-    public UserModel createUser(UserModel user) {
-        user.setId(Long.valueOf(0));
-        user.setPassword(
-            passwordEncoder.encode(user.getPassword())
-        );
-        return repository.save(user);
-    }
-
-    public UserModel updateUser(UserModel newUser, long id) {
-        UserModel user = findById(id);
-        BeanUtils.copyProperties(newUser, user);
-        user.setId(id);
+    public UserModel save(UserModel user) {
         user.setPassword(
             passwordEncoder.encode(user.getPassword())
         );
