@@ -53,25 +53,24 @@ public class EmployeeService {
 
     @Transactional
     public UserModel updateEmployee(EmployeeRequestDTO dto, long id) {
+        UserModel user = findById(id);
         if(isEmployee(dto.getRole())) {
-            UserModel employee = new UserModel();
-            employee.setUsername(dto.getUsername());
-            employee.setRole(
+            user.setUsername(dto.getUsername());
+            user.setRole(
                 roleService.findByName(dto.getRole())
             );
-            employee.setPassword(dto.getPassword());
-            return userService.updateUser(employee, id);
+            user.setPassword(dto.getPassword());
+            return userService.updateUser(user, id);
         } else {
             throw new ResponseStatusException(
                 HttpStatus.FORBIDDEN,
-                "The role must be a employee"
+                "The role must be an employee"
             );
         }
     }
 
     public void deleteById(long id) {
-        UserModel user = findById(id);
-        if(isEmployee(user)) userService.deleteById(id);
+        if(isEmployee(id)) userService.deleteById(id);
         else {
             throw new ResponseStatusException(
                 HttpStatus.CONFLICT,
@@ -89,6 +88,10 @@ public class EmployeeService {
                 "The user is not an employee"
             );
         }
+    }
+
+    private boolean isEmployee(long id) {
+        return isEmployee(userService.findById(id));
     }
 
     private boolean isEmployee(UserModel user) {
