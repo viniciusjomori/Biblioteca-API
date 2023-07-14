@@ -33,8 +33,8 @@ public class BookModel {
     @Column
     private int availableCopies;
     @OneToMany(mappedBy = "book")
-    Collection<LoanModel> loans;
+    private Collection<LoanModel> loans;
     @OneToMany(mappedBy = "book")
-    Collection<ReserveModel> reserves;
+    private Collection<ReserveModel> reserves;
 
 }
